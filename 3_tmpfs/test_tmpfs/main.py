@@ -29,8 +29,25 @@ def main() -> None:
     relation = relation_aspect(normal_result, tmpfs_result)
     print(f"Relation aspect between tmpfs speed and normal speed results in tmpfs beeing {relation:.2f} times faster. ")
 
-def benchmark(path: Union[str, PathLike]) -> Any:
-    raise NotImplementedError("Benchmarking not implemented yet")
+def benchmark(path: Union[str, PathLike]) -> float:
+    # We define the file where the full 0's will be.
+    test_file = Path(path) / "benchmark.tmp"
+    # Start the timer (returns a float, so will do the benchmark)
+    start = time.perf_counter()
+    # We open test_file and write. As we defined CHUNK as a byte file, we need to open the file with "wb" not just "w"
+    # because it would raise TypeError ("w" text, "wb" bytes).
+    with open(test_file, "wb") as f:
+        for _ in range(FILE_SIZE_MB):
+            f.write(CHUNK)
+        # We must push the data to the disk, because if not, it will be count as done when RAM finishes, wich would look as
+        # fast as tmpfs. For tmpfs test won't affect because it has no disk.
+        f.flush()
+        os.fsync(f.fileno())
+    # We get the time of the moment it finishes, and substract the initial to get the duration.
+    total_time = time.perf_counter() - start
+    # Removes the file for not having 1GB there, and also for if we do multiple tests for not filling the tmpfs (2GB).
+    test_file.unlink()
+    return total_time
 
 def relation_aspect(normal_result: float, tmpfs_result: float) -> float:
     return normal_result/tmpfs_result
