@@ -33,3 +33,15 @@ chown oriol:profes /tmp/prac3/file1.txt
 # Owner can rwx (rwx = 111 = 7), group can rwx (7), ohters no permissions (000 = 0).
 # So, as it's user, group, others (ugo), it will be 770.
 chmod 770 /tmp/prac3/file1.txt
+
+# 4.
+# We create the three personal files
+echo "Hi, Im Oriol" > /tmp/prac3/oriol.txt
+echo "Hi, Im Ferran" > /tmp/prac3/ferran.txt
+echo "Hi, Im Pablo" > /tmp/prac3/pablo.txt
+# We make each teacher owner of its file, and from group profes
+chown oriol:profes /tmp/prac3/oriol.txt
+chown ferran:profes /tmp/prac3/ferran.txt
+chown pablo:profes /tmp/prac3/pablo.txt
+# We change permissions so the owner can rwx (7), group nothing (0), others nothing (0)
+chmod 700 /tmp/prac3/oriol.txt /tmp/prac3/ferran.txt /tmp/prac3/pablo.txt
