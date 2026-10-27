@@ -27,3 +27,9 @@ chown root:profes /tmp/prac3
 # 3.
 # We put some text on a new file.
 echo 'printf("hello world")' > /tmp/prac3/file1.txt
+# We change ownership: owner oriol and group profes
+chown oriol:profes /tmp/prac3/file1.txt
+# We change permissions with chmod:
+# Owner can rwx (rwx = 111 = 7), group can rwx (7), ohters no permissions (000 = 0).
+# So, as it's user, group, others (ugo), it will be 770.
+chmod 770 /tmp/prac3/file1.txt
