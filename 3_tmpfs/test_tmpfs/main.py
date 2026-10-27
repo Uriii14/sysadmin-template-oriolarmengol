@@ -4,6 +4,7 @@ from pathlib import Path
 
 import os
 import time
+import shutil
 
 FILE_SIZE_MB = 1024         # 1GB of file, under 2GB of tmpfs in order it can work properly.
 CHUNK = b"0"*(1024*1024)    # We write 1GB of 0's
@@ -27,7 +28,14 @@ def main() -> None:
     # We call relation_aspect to calculate how faster is tmpfs compared to normal
     # and we add a print so we can see the ratio, with 2 decimals.
     relation = relation_aspect(normal_result, tmpfs_result)
-    print(f"Relation aspect between tmpfs speed and normal speed results in tmpfs beeing {relation:.2f} times faster. ")
+    print(f"Relation aspect between tmpfs speed and normal speed results in tmpfs being {relation:.2f} times faster. ")
+    # Other relation aspects:
+    print(f"Speed: tmpfs = {1024/tmpfs_result:.2f} MiB/s, normal = {1024/normal_result:.2f}")
+    tmpfs_size = shutil.disk_usage(tmpfs_path)
+    normal_size = shutil.disk_usage(normal_path)
+    print(f"Size: tmpfs = {tmpfs_size.total/(1024*1024*1024):.1f}GiB, normal = {normal_size.total/(1024*1024*1024):.1f} GiB")
+    
+
 
 def benchmark(path: Union[str, PathLike]) -> float:
     # We define the file where the full 0's will be.
@@ -48,6 +56,8 @@ def benchmark(path: Union[str, PathLike]) -> float:
     # Removes the file for not having 1GB there, and also for if we do multiple tests for not filling the tmpfs (2GB).
     test_file.unlink()
     return total_time
+
+
 
 def relation_aspect(normal_result: float, tmpfs_result: float) -> float:
     return normal_result/tmpfs_result
